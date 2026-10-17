@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from routers import home, prayer, news, explore, transport, pharmacies, health, auth
+from routers import home, prayer, news, explore, transport, pharmacies, health, auth, admin
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Bozok 66 Süper Uygulama API Gateway",
-    description="Yozgat şehir dinamiklerini birleştiren merkezi API Geçidi.",
-    version="1.0.0"
+    description="Yozgat şehir dinamiklerini birleştiren merkezi API Geçidi ve Appsmith / ToolJet Yönetim Paneli API.",
+    version="1.1.0"
 )
 app.add_middleware(
     CORSMiddleware,
@@ -28,10 +28,15 @@ app.include_router(transport.router, prefix="/api/transport", tags=["Ulaşım & 
 app.include_router(pharmacies.router, prefix="/api/pharmacies", tags=["Eczaneler & Nöbetçi Eczaneler"])
 app.include_router(health.router, prefix="/api/health", tags=["Sağlık & Acil Durum"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Yetkilendirme & Kullanıcı"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Appsmith / ToolJet Yönetim Paneli"])
 
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+admin_web_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "admin-panel", "web-dashboard")
+if os.path.exists(admin_web_dir):
+    app.mount("/admin-dashboard", StaticFiles(directory=admin_web_dir, html=True), name="admin-dashboard")
 
 
 @app.get("/")

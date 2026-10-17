@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  # ==========================================
+  # 1. APPSMITH COMMUNITY EDITION (PORT: 8080)
+  # ==========================================
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce:latest
+    container_name: bozok66-appsmith
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./appsmith-data:/appsmith-stacks
+    restart: unless-stopped
+    environment:
+      - APPSMITH_ENCRYPTION_PASSWORD=bozok66secretpassword
+      - APPSMITH_ENCRYPTION_SALT=bozok66secretsalt
+    networks:
+      - bozok66-net
+
+  # ==========================================
+  # 2. TOOLJET SERVER & CLIENT (PORT: 8082)
+  # ==========================================
+  # ToolJet'i yerel çalıştırmak isterseniz aşağıdaki servisi aktif edebilirsiniz:
+  # tooljet:
+  #   image: tooljet/tooljet-ce:latest
+  #   container_name: bozok66-tooljet
+  #   ports:
+  #     - "8082:3000"
+  #   environment:
+  #     - TOOLJET_HOST=http://localhost:8082
+  #     - LOCKBOX_MASTER_KEY=0000000000000000000000000000000000000000000000000000000000000000
+  #     - SECRET_KEY_BASE=0000000000000000000000000000000000000000000000000000000000000000
+  #   networks:
+  #     - bozok66-net
+
+networks:
+  bozok66-net:
+    driver: bridge

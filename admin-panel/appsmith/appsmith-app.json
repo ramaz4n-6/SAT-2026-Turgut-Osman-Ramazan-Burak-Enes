@@ -1,0 +1,241 @@
+{
+  "exportVersion": 2,
+  "appIsExample": false,
+  "application": {
+    "name": "Bozok 66 - Super App Admin Paneli (Appsmith)",
+    "slug": "bozok66-admin",
+    "color": "#D32F2F",
+    "icon": "shield-check",
+    "pages": [
+      {
+        "id": "Dashboard_Page",
+        "name": "Genel Bakış (Dashboard)",
+        "isDefault": true,
+        "layouts": [
+          {
+            "id": "layout_dashboard",
+            "dsl": {
+              "widgetName": "MainContainer",
+              "backgroundColor": "#F4F6F9",
+              "topRow": 0,
+              "bottomRow": 1200,
+              "children": [
+                {
+                  "type": "CONTAINER_WIDGET",
+                  "widgetName": "HeaderContainer",
+                  "backgroundColor": "#FFFFFF",
+                  "children": [
+                    {
+                      "type": "TEXT_WIDGET",
+                      "widgetName": "AppTitle",
+                      "text": "Bozok 66 - Yozgat Süper Uygulama Yönetim Konsolu",
+                      "fontSize": "HEADING_1",
+                      "textColor": "#B71C1C"
+                    },
+                    {
+                      "type": "TEXT_WIDGET",
+                      "widgetName": "AppSubtitle",
+                      "text": "Appsmith & ToolJet Entegre Yönetim Paneli - Gerçek Zamanlı CRUD Arayüzü",
+                      "fontSize": "SUBHEADING"
+                    }
+                  ]
+                },
+                {
+                  "type": "STATBOX_WIDGET",
+                  "widgetName": "StatTotalUsers",
+                  "label": "Toplam Kayıtlı Kullanıcı",
+                  "value": "{{GetStats.data.data.total_users || 124}}",
+                  "icon": "user"
+                },
+                {
+                  "type": "STATBOX_WIDGET",
+                  "widgetName": "StatDutyPharmacies",
+                  "label": "Bugün Nöbetçi Eczaneler",
+                  "value": "{{GetStats.data.data.on_duty_pharmacies || 2}}",
+                  "icon": "heart"
+                },
+                {
+                  "type": "STATBOX_WIDGET",
+                  "widgetName": "StatBusRoutes",
+                  "label": "Aktif Otobüs Hatları",
+                  "value": "{{GetStats.data.data.total_bus_routes || 4}}",
+                  "icon": "truck"
+                },
+                {
+                  "type": "STATBOX_WIDGET",
+                  "widgetName": "StatUrgentBlood",
+                  "label": "Acil Kan İhtiyaçları",
+                  "value": "{{GetStats.data.data.urgent_blood_requests || 2}}",
+                  "icon": "alert-circle"
+                },
+                {
+                  "type": "TABS_WIDGET",
+                  "widgetName": "MainTabs",
+                  "tabs": [
+                    { "id": "tab1", "label": "Eczane & Nöbetçi Yönetimi" },
+                    { "id": "tab2", "label": "Kullanıcılar" },
+                    { "id": "tab3", "label": "Otobüs Sefer & Hatları" },
+                    { "id": "tab4", "label": "Acil Kan Çağrıları" },
+                    { "id": "tab5", "label": "Keşfet & Gezilecek Yerler" }
+                  ],
+                  "children": [
+                    {
+                      "tabId": "tab1",
+                      "children": [
+                        {
+                          "type": "TABLE_WIDGET_V2",
+                          "widgetName": "PharmaciesTable",
+                          "tableData": "{{GetPharmacies.data.data}}",
+                          "primaryColumns": {
+                            "name": { "label": "Eczane Adı" },
+                            "is_on_duty": { "label": "Nöbetçi mi?" },
+                            "address": { "label": "Adres" },
+                            "phone": { "label": "Telefon" },
+                            "hours": { "label": "Çalışma Saatleri" }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tabId": "tab2",
+                      "children": [
+                        {
+                          "type": "TABLE_WIDGET_V2",
+                          "widgetName": "UsersTable",
+                          "tableData": "{{GetUsers.data.data}}",
+                          "primaryColumns": {
+                            "id": { "label": "Kullanıcı ID" },
+                            "full_name": { "label": "Ad Soyad" },
+                            "email": { "label": "E-Posta" },
+                            "is_active": { "label": "Aktiflik" },
+                            "created_at": { "label": "Kayıt Tarihi" }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tabId": "tab3",
+                      "children": [
+                        {
+                          "type": "TABLE_WIDGET_V2",
+                          "widgetName": "BusTable",
+                          "tableData": "{{GetBuses.data.data}}",
+                          "primaryColumns": {
+                            "line_number": { "label": "Hat No" },
+                            "route_name": { "label": "Güzergah" },
+                            "direction": { "label": "Yön" },
+                            "status": { "label": "Canlı Durum" },
+                            "next_departure": { "label": "Sıradaki Kalkış" }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tabId": "tab4",
+                      "children": [
+                        {
+                          "type": "TABLE_WIDGET_V2",
+                          "widgetName": "BloodTable",
+                          "tableData": "{{GetBloodRequests.data.data}}",
+                          "primaryColumns": {
+                            "hospital": { "label": "Hastane" },
+                            "blood_group": { "label": "Kan Grubu" },
+                            "patient_note": { "label": "Hasta Notu" },
+                            "contact_phone": { "label": "İletişim" },
+                            "is_active": { "label": "Durum" }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "datasources": [
+    {
+      "name": "Bozok66_FastAPI_Gateway",
+      "pluginId": "restapi-plugin",
+      "datasourceConfiguration": {
+        "url": "http://localhost:8000/api/admin",
+        "headers": [
+          { "key": "Content-Type", "value": "application/json" }
+        ]
+      }
+    },
+    {
+      "name": "Bozok66_MySQL_Direct",
+      "pluginId": "mysql-plugin",
+      "datasourceConfiguration": {
+        "endpoints": [{ "host": "localhost", "port": 3306 }],
+        "authentication": {
+          "databaseName": "bozok66",
+          "username": "root",
+          "password": ""
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "name": "GetStats",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/stats"
+      }
+    },
+    {
+      "name": "GetPharmacies",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/pharmacies"
+      }
+    },
+    {
+      "name": "TogglePharmacyDuty",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "PATCH",
+        "path": "/pharmacies/{{PharmaciesTable.selectedRow.id}}/toggle-duty"
+      }
+    },
+    {
+      "name": "GetUsers",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/users"
+      }
+    },
+    {
+      "name": "GetBuses",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/buses"
+      }
+    },
+    {
+      "name": "GetBloodRequests",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/blood-requests"
+      }
+    },
+    {
+      "name": "GetPlaces",
+      "pageId": "Dashboard_Page",
+      "actionConfiguration": {
+        "httpMethod": "GET",
+        "path": "/places"
+      }
+    }
+  ]
+}

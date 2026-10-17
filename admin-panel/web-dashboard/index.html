@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bozok 66 - Appsmith & ToolJet Admin Paneli</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- SOL YAN MENÜ (Appsmith / ToolJet Stili) -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="brand-info">
+          <h2>BOZOK 66</h2>
+          <span>Yönetim Konsolu</span>
+        </div>
+      </div>
+
+      <div class="platform-badge">
+        <span class="badge-dot"></span>
+        <span>Appsmith & ToolJet Engine</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Genel Bakış</span>
+        </button>
+        <button class="nav-item" data-tab="pharmacies">
+          <i class="fa-solid fa-notes-medical"></i>
+          <span>Nöbetçi Eczaneler</span>
+          <span class="nav-pill" id="badgeDutyCount">0</span>
+        </button>
+        <button class="nav-item" data-tab="users">
+          <i class="fa-solid fa-users"></i>
+          <span>Kullanıcılar</span>
+        </button>
+        <button class="nav-item" data-tab="buses">
+          <i class="fa-solid fa-bus"></i>
+          <span>Otobüs Hat & Seferler</span>
+        </button>
+        <button class="nav-item" data-tab="blood">
+          <i class="fa-solid fa-droplet"></i>
+          <span>Acil Kan Çağrıları</span>
+          <span class="nav-pill red" id="badgeBloodCount">0</span>
+        </button>
+        <button class="nav-item" data-tab="places">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Keşfet & Gezilecek Yerler</span>
+        </button>
+        <button class="nav-item" data-tab="integration">
+          <i class="fa-solid fa-plug"></i>
+          <span>Appsmith / ToolJet Import</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="api-status online" id="apiStatusBadge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="apiStatusText">API Gateway: Online</span>
+        </div>
+        <div class="server-endpoint">
+          <code>http://localhost:8000</code>
+        </div>
+      </div>
+    </aside>
+
+    <!-- SAĞ ANA İÇERİK ALANI -->
+    <main class="main-content">
+      <!-- Üst Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="pageTitle">Genel Bakış (Dashboard)</h1>
+          <p id="pageSubtitle">Süper uygulama dinamiklerinin merkezi yönetim kontrol paneli</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-outline" id="btnRefresh">
+            <i class="fa-solid fa-rotate"></i> Yenile
+          </button>
+          <a href="http://localhost:8000/docs" target="_blank" class="btn btn-outline">
+            <i class="fa-solid fa-book"></i> Swagger Docs
+          </a>
+          <button class="btn btn-primary" id="btnActionAdd">
+            <i class="fa-solid fa-plus"></i> <span id="btnAddText">Yeni Ekle</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 1. DASHBOARD SEKMESİ -->
+      <section class="tab-pane active" id="pane-dashboard">
+        <!-- Metrik Kartları -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon bg-red">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Toplam Kayıtlı Kullanıcı</span>
+              <h3 class="metric-value" id="statUsers">-</h3>
+              <span class="metric-sub text-success"><i class="fa-solid fa-arrow-up"></i> Aktif hesaplar</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon bg-emerald">
+              <i class="fa-solid fa-kit-medical"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Nöbetçi Eczaneler</span>
+              <h3 class="metric-value" id="statPharmacies">-</h3>
+              <span class="metric-sub">Yozgat Merkez & İlçeler</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon bg-blue">
+              <i class="fa-solid fa-bus-simple"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Aktif Otobüs Hatları</span>
+              <h3 class="metric-value" id="statBuses">-</h3>
+              <span class="metric-sub">Canlı sefer takipte</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon bg-crimson">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Acil Kan İlanı</span>
+              <h3 class="metric-value" id="statBlood">-</h3>
+              <span class="metric-sub text-danger">Kızılay & Hastaneler</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Hızlı Kontrol Tabloları -->
+        <div class="dashboard-split">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-notes-medical"></i> Bugünün Nöbetçi Eczaneleri</h3>
+              <button class="btn-sm btn-ghost" onclick="switchTab('pharmacies')">Tümünü Yönet &rarr;</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="tableDashPharmacies">
+                <thead>
+                  <tr>
+                    <th>Eczane Adı</th>
+                    <th>Adres</th>
+                    <th>Telefon</th>
+                    <th>Durum</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-droplet text-danger"></i> Aktif Acil Kan Talepleri</h3>
+              <button class="btn-sm btn-ghost" onclick="switchTab('blood')">Tümünü Yönet &rarr;</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="tableDashBlood">
+                <thead>
+                  <tr>
+                    <th>Hastane</th>
+                    <th>Grup</th>
+                    <th>Hasta Notu</th>
+                    <th>İletişim</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ECZANE YÖNETİM SEKMESİ -->
+      <section class="tab-pane" id="pane-pharmacies">
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchPharmacies" placeholder="Eczane adı, adres veya telefon ile ara...">
+            </div>
+            <button class="btn btn-primary" onclick="openPharmacyModal()">
+              <i class="fa-solid fa-plus"></i> Yeni Eczane Ekle
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="tableFullPharmacies">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Eczane Adı</th>
+                  <th>Nöbet Durumu</th>
+                  <th>Adres</th>
+                  <th>Mahalle / Bölge</th>
+                  <th>Telefon</th>
+                  <th>Saatler</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. KULLANICI YÖNETİM SEKMESİ -->
+      <section class="tab-pane" id="pane-users">
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchUsers" placeholder="Kullanıcı adı veya e-posta ile ara...">
+            </div>
+            <button class="btn btn-primary" onclick="openUserModal()">
+              <i class="fa-solid fa-user-plus"></i> Yeni Kullanıcı Ekle
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="tableFullUsers">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Ad Soyad</th>
+                  <th>E-Posta</th>
+                  <th>Durum</th>
+                  <th>Kayıt Tarihi</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. OTOBÜS HAT VE SEFERLER SEKMESİ -->
+      <section class="tab-pane" id="pane-buses">
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchBuses" placeholder="Hat no veya güzergaha göre filtrele...">
+            </div>
+            <button class="btn btn-primary" onclick="openBusModal()">
+              <i class="fa-solid fa-plus"></i> Yeni Hat Ekle
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="tableFullBuses">
+              <thead>
+                <tr>
+                  <th>Hat</th>
+                  <th>Güzergah</th>
+                  <th>Yön</th>
+                  <th>İlk / Son</th>
+                  <th>Sıklık</th>
+                  <th>Canlı Sefer Dilimi</th>
+                  <th>Sıradaki Sefer</th>
+                  <th>Canlı Durum</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ACİL KAN ÇAĞRILARI SEKMESİ -->
+      <section class="tab-pane" id="pane-blood">
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchBlood" placeholder="Hastane veya kan grubu ara...">
+            </div>
+            <button class="btn btn-danger" onclick="openBloodModal()">
+              <i class="fa-solid fa-plus"></i> Yeni Acil Kan Çağrısı Aç
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="tableFullBlood">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Hastane</th>
+                  <th>Kan Grubu</th>
+                  <th>Hasta Durumu / Not</th>
+                  <th>İletişim Telefonu</th>
+                  <th>Yayın Tarihi</th>
+                  <th>Durum</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. GEZİLECEK YERLER SEKMESİ -->
+      <section class="tab-pane" id="pane-places">
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchPlaces" placeholder="Mekan adı veya kategori ile ara...">
+            </div>
+            <button class="btn btn-primary" onclick="openPlaceModal()">
+              <i class="fa-solid fa-plus"></i> Yeni Gezi Noktası Ekle
+            </button>
+          </div>
+          <div class="places-grid" id="placesGrid"></div>
+        </div>
+      </section>
+
+      <!-- 7. APPSMITH / TOOLJET ENTEGRASYON SEKMESİ -->
+      <section class="tab-pane" id="pane-integration">
+        <div class="integration-cards">
+          <!-- Appsmith Kartı -->
+          <div class="integration-card">
+            <div class="int-header">
+              <img src="https://assets.website-files.com/61829e1f57b6f3b0ae5e5d3c/61829e1f57b6f3b7ce5e5dc8_Appsmith-Logo-Horizontal-White.svg" alt="Appsmith" class="int-logo" style="background:#0F172A; padding:8px; border-radius:6px; height:38px;">
+              <span class="badge badge-success">Destekleniyor</span>
+            </div>
+            <h3>Appsmith İle Doğrudan Entegrasyon</h3>
+            <p>Projeye özel hazırlanmış Appsmith JSON şablonunu tek tıkla Appsmith Cloud veya yerel Appsmith sunucunuza aktarabilirsiniz.</p>
+            
+            <div class="int-steps">
+              <div class="step-item"><b>1.</b> <a href="https://app.appsmith.com" target="_blank" class="link">app.appsmith.com</a> adresinde ücretsiz hesap açın veya yerel Docker'ı başlatın.</div>
+              <div class="step-item"><b>2.</b> "Create New" &rarr; "Import Application" seçin.</div>
+              <div class="step-item"><b>3.</b> <code>admin-panel/appsmith/appsmith-app.json</code> dosyasını yükleyin.</div>
+            </div>
+
+            <div class="int-actions">
+              <a href="../appsmith/appsmith-app.json" download class="btn btn-primary">
+                <i class="fa-solid fa-download"></i> Appsmith JSON İndir
+              </a>
+              <a href="https://app.appsmith.com" target="_blank" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Appsmith'e Git
+              </a>
+            </div>
+          </div>
+
+          <!-- ToolJet Kartı -->
+          <div class="integration-card">
+            <div class="int-header">
+              <div style="font-size:22px; font-weight:800; color:#3E63DD; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-rocket"></i> ToolJet
+              </div>
+              <span class="badge badge-success">Destekleniyor</span>
+            </div>
+            <h3>ToolJet İle Doğrudan Entegrasyon</h3>
+            <p>ToolJet formatındaki REST API sorguları, CRUD tabloları ve hazır modal arayüzlerini projenize bağlayın.</p>
+            
+            <div class="int-steps">
+              <div class="step-item"><b>1.</b> <a href="https://app.tooljet.com" target="_blank" class="link">app.tooljet.com</a> adresine gidin.</div>
+              <div class="step-item"><b>2.</b> "Import App" butonuna tıklayın.</div>
+              <div class="step-item"><b>3.</b> <code>admin-panel/tooljet/tooljet-app.json</code> dosyasını seçin.</div>
+            </div>
+
+            <div class="int-actions">
+              <a href="../tooljet/tooljet-app.json" download class="btn btn-primary">
+                <i class="fa-solid fa-download"></i> ToolJet JSON İndir
+              </a>
+              <a href="https://app.tooljet.com" target="_blank" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> ToolJet'e Git
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: ECZANE EKLE / DÜZENLE -->
+  <div class="modal-overlay" id="modalPharmacy">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalPharmacyTitle">Eczane Ekle</h3>
+        <button class="modal-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="formPharmacy" onsubmit="savePharmacy(event)">
+        <input type="hidden" id="pharmacyId">
+        <div class="form-group">
+          <label>Eczane Adı *</label>
+          <input type="text" id="pharmacyName" required placeholder="Örn: Bozok Eczanesi">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nöbetçi Durumu</label>
+            <select id="pharmacyIsDuty">
+              <option value="false">Hayır (Normal)</option>
+              <option value="true">Evet (NÖBETÇİ)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Telefon *</label>
+            <input type="text" id="pharmacyPhone" required placeholder="0354 212 11 22">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Adres *</label>
+          <input type="text" id="pharmacyAddress" required placeholder="Lise Caddesi No:12">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mahalle</label>
+            <input type="text" id="pharmacyNeighborhood" placeholder="Aşağı Nohutlu Mah.">
+          </div>
+          <div class="form-group">
+            <label>Çalışma Saatleri</label>
+            <input type="text" id="pharmacyHours" placeholder="08:30 - 19:00">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModals()">İptal</button>
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ACİL KAN ÇAĞRISI EKLE -->
+  <div class="modal-overlay" id="modalBlood">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Yeni Acil Kan İlanı Yayınla</h3>
+        <button class="modal-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="formBlood" onsubmit="saveBlood(event)">
+        <div class="form-group">
+          <label>Hastane Adı *</label>
+          <input type="text" id="bloodHospital" required placeholder="Yozgat Şehir Hastanesi">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Gerekli Kan Grubu *</label>
+            <select id="bloodGroup" required>
+              <option value="A Rh(+)">A Rh(+)</option>
+              <option value="A Rh(-)">A Rh(-)</option>
+              <option value="B Rh(+)">B Rh(+)</option>
+              <option value="B Rh(-)">B Rh(-)</option>
+              <option value="AB Rh(+)">AB Rh(+)</option>
+              <option value="AB Rh(-)">AB Rh(-)</option>
+              <option value="0 Rh(+)">0 Rh(+)</option>
+              <option value="0 Rh(-)">0 Rh(-)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>İletişim Numarası *</label>
+            <input type="text" id="bloodPhone" required placeholder="0354 219 00 10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Hasta Durumu / Açıklama *</label>
+          <textarea id="bloodNote" required rows="3" placeholder="Örn: Genel cerrahi hastası için acil 2 ünite"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModals()">İptal</button>
+          <button type="submit" class="btn btn-danger">İlanı Yayınla</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: KULLANICI EKLE -->
+  <div class="modal-overlay" id="modalUser">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Yeni Kullanıcı Ekle</h3>
+        <button class="modal-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="formUser" onsubmit="saveUser(event)">
+        <div class="form-group">
+          <label>Ad Soyad *</label>
+          <input type="text" id="userName" required placeholder="Ahmet Yılmaz">
+        </div>
+        <div class="form-group">
+          <label>E-Posta *</label>
+          <input type="email" id="userEmail" required placeholder="ogrenci@bozok.edu.tr">
+        </div>
+        <div class="form-group">
+          <label>Şifre *</label>
+          <input type="password" id="userPass" required placeholder="******">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModals()">İptal</button>
+          <button type="submit" class="btn btn-primary">Kullanıcıyı Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

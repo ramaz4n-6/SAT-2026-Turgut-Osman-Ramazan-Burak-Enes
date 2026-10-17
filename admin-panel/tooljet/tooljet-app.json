@@ -1,0 +1,184 @@
+{
+  "name": "Bozok 66 - Süper Uygulama Yönetim Paneli (ToolJet)",
+  "slug": "bozok-66-tooljet-admin",
+  "version": "1.0.0",
+  "data_sources": [
+    {
+      "name": "Bozok66_API_Gateway",
+      "kind": "restapi",
+      "options": {
+        "url": "http://localhost:8000/api/admin",
+        "headers": [
+          ["Content-Type", "application/json"],
+          ["Accept", "application/json"]
+        ]
+      }
+    },
+    {
+      "name": "Bozok66_MySQL_DB",
+      "kind": "mysql",
+      "options": {
+        "host": "localhost",
+        "port": 3306,
+        "database": "bozok66",
+        "username": "root",
+        "password": ""
+      }
+    }
+  ],
+  "data_queries": [
+    {
+      "name": "getStats",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/stats"
+      }
+    },
+    {
+      "name": "getUsers",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/users"
+      }
+    },
+    {
+      "name": "getPharmacies",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/pharmacies"
+      }
+    },
+    {
+      "name": "toggleDutyPharmacy",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "patch",
+        "url": "/pharmacies/{{components.tablePharmacies.selectedRow.id}}/toggle-duty"
+      }
+    },
+    {
+      "name": "getBuses",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/buses"
+      }
+    },
+    {
+      "name": "getBloodRequests",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/blood-requests"
+      }
+    },
+    {
+      "name": "toggleBloodStatus",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "patch",
+        "url": "/blood-requests/{{components.tableBlood.selectedRow.id}}/toggle"
+      }
+    },
+    {
+      "name": "getPlaces",
+      "data_source": "Bozok66_API_Gateway",
+      "options": {
+        "method": "get",
+        "url": "/places"
+      }
+    }
+  ],
+  "components": {
+    "header": {
+      "component": "Text",
+      "properties": {
+        "text": "Bozok 66 Yozgat Süper Uygulama - ToolJet Yönetim Paneli",
+        "textSize": "24",
+        "textColor": "#C62828",
+        "fontWeight": "bold"
+      }
+    },
+    "tabs": {
+      "component": "Tabs",
+      "properties": {
+        "tabs": [
+          { "id": "dashboard", "title": "Genel Bakış" },
+          { "id": "pharmacies", "title": "Nöbetçi Eczaneler" },
+          { "id": "users", "title": "Kullanıcılar" },
+          { "id": "buses", "title": "Otobüs Hatları" },
+          { "id": "blood", "title": "Acil Kan Talepleri" },
+          { "id": "places", "title": "Gezilecek Yerler" }
+        ]
+      }
+    },
+    "tablePharmacies": {
+      "component": "Table",
+      "properties": {
+        "data": "{{queries.getPharmacies.data.data}}",
+        "columns": [
+          { "name": "name", "header": "Eczane Adı" },
+          { "name": "is_on_duty", "header": "Nöbetçi Durumu" },
+          { "name": "address", "header": "Adres" },
+          { "name": "phone", "header": "Telefon" },
+          { "name": "hours", "header": "Saatler" }
+        ],
+        "actions": [
+          {
+            "name": "Nöbetçi Aç/Kapa",
+            "handler": "toggleDutyPharmacy"
+          }
+        ]
+      }
+    },
+    "tableUsers": {
+      "component": "Table",
+      "properties": {
+        "data": "{{queries.getUsers.data.data}}",
+        "columns": [
+          { "name": "id", "header": "ID" },
+          { "name": "full_name", "header": "Adı Soyadı" },
+          { "name": "email", "header": "E-Posta" },
+          { "name": "is_active", "header": "Aktiflik" },
+          { "name": "created_at", "header": "Kayıt Tarihi" }
+        ]
+      }
+    },
+    "tableBuses": {
+      "component": "Table",
+      "properties": {
+        "data": "{{queries.getBuses.data.data}}",
+        "columns": [
+          { "name": "line_number", "header": "Hat" },
+          { "name": "route_name", "header": "Güzergah" },
+          { "name": "status", "header": "Durum" },
+          { "name": "current_slot", "header": "Sefer Dilimi" },
+          { "name": "next_departure", "header": "Sıradaki Sefer" },
+          { "name": "eta_text", "header": "Kalan Süre" }
+        ]
+      }
+    },
+    "tableBlood": {
+      "component": "Table",
+      "properties": {
+        "data": "{{queries.getBloodRequests.data.data}}",
+        "columns": [
+          { "name": "hospital", "header": "Hastane" },
+          { "name": "blood_group", "header": "Kan Grubu" },
+          { "name": "patient_note", "header": "Hasta / Not" },
+          { "name": "contact_phone", "header": "Telefon" },
+          { "name": "is_active", "header": "Aktif" }
+        ],
+        "actions": [
+          {
+            "name": "Durumu Değiştir",
+            "handler": "toggleBloodStatus"
+          }
+        ]
+      }
+    }
+  }
+}
